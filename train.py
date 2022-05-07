@@ -5,6 +5,7 @@ import argparse
 import pickle
 
 import torch
+from torch.utils.data import DataLoader
 import pandas as pd
 import numpy as np
 import tqdm
@@ -44,13 +45,14 @@ if __name__ == '__main__':
     model.to(device)
 
     icu_train = ICUSepsisDataset(os.path.join(args.data_path, 'train'))
+    train_loader = DataLoader(icu_train, batch_size=1, shuffle=True)
 
     loss = torch.nn.CrossEntropyLoss()
     optimizer = OPTIMIZERS[args.optimizer](model.parameters(), lr=args.lr)
  
     for epoch in range(args.epochs):
         train_loss = 0.0
-        for x,y in icu_train:
+        for x,y in train_loader:
             if x is None or y is None:
                 continue
 
