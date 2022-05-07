@@ -75,12 +75,12 @@ if __name__ == '__main__':
             L.backward()
             optimizer.step()
 
-            if i % 30 == 0:
+            if i % args.print_steps == 0:
                 print(f'L: {train_loss / i: .5}')
 
         train_loss /= train_size
 
-        print(f'Epoch {epoch+1}/{args.epochs}, Loss {train_loss / }')
+        print(f'Epoch {epoch+1}/{args.epochs}, Loss {train_loss}')
         
         print('-> Saving state')
         torch.save(model.state_dict(), 'model.state')
