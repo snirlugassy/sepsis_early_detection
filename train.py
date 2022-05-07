@@ -25,7 +25,7 @@ OPTIMIZERS = {
 
 if __name__ == '__main__':
     argparser = argparse.ArgumentParser(description='Train mask detection nerual network')
-    argparser.add_argument('--data-path', type=str, required=True, dest='data_path', default='/home/student/data/train')
+    argparser.add_argument('--data-path', type=str, required=True, dest='data_path', default='/home/student/data/')
     argparser.add_argument('--epochs', type=int, dest='epochs', default=100)
     argparser.add_argument('--optimizer', type=str, dest='optimizer', choices=OPTIMIZERS.keys(), default='adam')
     argparser.add_argument('--lr', type=float, dest='lr', default=0.005)
@@ -35,7 +35,6 @@ if __name__ == '__main__':
     
     print('====== TRAIN =======')
     print('optimizer:', args.optimizer)
-    print('batch-size:', args.batch_size)
     print('epochs:', args.epochs)
     print('l-rate:', args.lr)
     print('device:', device)
@@ -44,7 +43,7 @@ if __name__ == '__main__':
     model = SepsisPredictionModel(input_size=len(ICUSepsisDataset.features))
     model.to(device)
 
-    icu_train = ICUSepsisDataset(args.data_path)
+    icu_train = ICUSepsisDataset(os.path.join(args.data_path, 'train'))
 
     loss = torch.nn.CrossEntropyLoss()
     optimizer = torch.optim.Adam(model.parameters())
