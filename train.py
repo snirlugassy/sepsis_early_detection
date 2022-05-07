@@ -46,7 +46,7 @@ if __name__ == '__main__':
     icu_train = ICUSepsisDataset(os.path.join(args.data_path, 'train'))
 
     loss = torch.nn.CrossEntropyLoss()
-    optimizer = torch.optim.Adam(model.parameters())
+    optimizer = OPTIMIZERS[args.optimizer](model.parameters(), lr=args.lr)
  
     for epoch in range(args.epochs):
         train_loss = 0.0
