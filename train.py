@@ -30,7 +30,7 @@ if __name__ == '__main__':
     argparser.add_argument('--epochs', type=int, dest='epochs', default=100)
     argparser.add_argument('--optimizer', type=str, dest='optimizer', choices=OPTIMIZERS.keys(), default='adam')
     argparser.add_argument('--lr', type=float, dest='lr', default=0.005)
-    argparser.add_argument('--print-steps', type=int, dest='print_steps')
+    argparser.add_argument('--print-steps', type=int, dest='print_steps', default=30)
 
     args = argparser.parse_args()
     
