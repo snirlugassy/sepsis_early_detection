@@ -53,16 +53,20 @@ if __name__ == '__main__':
     for epoch in range(args.epochs):
         train_loss = 0.0
         for x,y in train_loader:
+            # assert one-by-one training
+            assert x.size(0) == 1 and y.size(0) == 1
+
+            # ignore invalid samples
             if x is None or y is None:
                 continue
 
             optimizer.zero_grad()
 
             x = x.to(device)
-            y = y.to(device)
+            y = y.to(device).squeeze()  # squeeze since batch_size=1
 
             # Forward pass
-            output = model(x)
+            output = model(x).squeeze() # squeeze since batch_size=1
             L = loss(output, y)
             train_loss += L.item() * x.size(0)
 
