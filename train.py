@@ -52,22 +52,19 @@ if __name__ == '__main__':
  
     for epoch in range(args.epochs):
         train_loss = 0.0
-        for x,y in train_loader:
-
+        for x,y in icu_train:
             # ignore invalid samples
             if x is None or y is None:
                 continue
 
-            # assert one-by-one training
-            assert x.size(0) == 1 and y.size(0) == 1
-
             optimizer.zero_grad()
 
-            x = x.to(device)
-            y = y.to(device).squeeze()  # squeeze since batch_size=1
+            x = x.to(device).unsqueeze(0)
+            y = y.to(device)  # squeeze since batch_size=1
+            N = len(y)
 
             # Forward pass
-            output = model(x).squeeze() # squeeze since batch_size=1
+            output = model(x).view(N,2) # squeeze since batch_size=1
             L = loss(output, y)
             train_loss += L.item() * x.size(0)
 
