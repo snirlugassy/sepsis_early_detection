@@ -46,17 +46,20 @@ if __name__ == '__main__':
 
     icu_train = ICUSepsisDataset(os.path.join(args.data_path, 'train'))
     train_loader = DataLoader(icu_train, batch_size=1, shuffle=True)
+    train_size = len(icu_train)
 
     loss = torch.nn.CrossEntropyLoss()
     optimizer = OPTIMIZERS[args.optimizer](model.parameters(), lr=args.lr)
  
     for epoch in range(args.epochs):
         train_loss = 0.0
+        i = 0
         for x,y in icu_train:
             # ignore invalid samples
             if x is None or y is None:
                 continue
 
+            i += 1
             optimizer.zero_grad()
 
             x = x.to(device).unsqueeze(0)
@@ -72,7 +75,12 @@ if __name__ == '__main__':
             L.backward()
             optimizer.step()
 
-        print(f'Epoch {epoch+1}/{args.epochs}, Loss {train_loss}')
+            if i % 30 == 0:
+                print(f'L: {train_loss / i: .5}')
+
+        train_loss /= train_size
+
+        print(f'Epoch {epoch+1}/{args.epochs}, Loss {train_loss / }')
         
         print('-> Saving state')
         torch.save(model.state_dict(), 'model.state')
