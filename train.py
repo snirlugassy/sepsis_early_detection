@@ -47,7 +47,7 @@ if __name__ == '__main__':
     print(model)
 
     icu_train = ICUSepsisDataset(os.path.join(args.data_path, 'train'))
-    train_loader = DataLoader(icu_train, batch_size=1, shuffle=True)
+    # train_loader = DataLoader(icu_train, batch_size=1, shuffle=True)
     train_size = len(icu_train)
 
     loss = torch.nn.CrossEntropyLoss()

@@ -52,8 +52,16 @@ class SepsisPredictionModel_B1(torch.nn.Module):
         )
 
     def forward(self, x):
+        # only from pytorch 1.11 there is support for unbatched LSTM
+        # in case there is no batch dimension, add it
+        if x.dim() == 2:
+            x = x.unsqueeze(0)
+        
         x, _ = self.lstm(x)
+
         # considers only the last state for predicting sepsis
-        x = x[-1].squeeze()
+        x = x.squeeze()[-1]
+        
         x = self.mlp(x)
+        
         return x
