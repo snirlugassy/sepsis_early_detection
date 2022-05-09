@@ -57,28 +57,34 @@ if __name__ == '__main__':
         train_loss = 0.0
         i = 0
         for x,y in icu_train:
-            # ignore invalid samples
-            if x is None:
-                continue
+            try:
+                # ignore invalid samples
+                if x is None:
+                    continue
 
-            i += 1
-            optimizer.zero_grad()
+                i += 1
+                optimizer.zero_grad()
 
-            x = x.to(device)
-            y = y.to(device)
-            N = len(y)
+                x = x.to(device)
+                y = y.to(device)
+                N = len(y)
 
-            # Forward pass
-            output = model(x)
-            L = loss(output, y[-1])
-            train_loss += L.item() * x.size(0)
+                # Forward pass
+                output = model(x)
+                L = loss(output, y[-1])
+                train_loss += L.item() * x.size(0)
 
-            # Backpropagation
-            L.backward()
-            optimizer.step()
+                # Backpropagation
+                L.backward()
+                optimizer.step()
 
-            if i % args.print_steps == 0:
-                print(f'L: {train_loss / i: .5}')
+                if i % args.print_steps == 0:
+                    print(f'L: {train_loss / i: .5}')
+            except Exception as e:
+                print("ERROR", e)
+                print('x.shape', x.shape)
+                print('y.shape', y.shape)
+                print('output.shape', output.shape)
 
         train_loss /= train_size
 
