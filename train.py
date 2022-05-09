@@ -26,7 +26,8 @@ OPTIMIZERS = {
 
 if __name__ == '__main__':
     argparser = argparse.ArgumentParser(description='Train mask detection nerual network')
-    argparser.add_argument('--data-path', type=str, required=True, dest='data_path', default='/home/student/data/')
+    argparser.add_argument('--data-path', type=str, required=True, dest='data_path')
+    argparser.add_argument('--output-path', type=str, dest='output_path', default='model.state')
     argparser.add_argument('--epochs', type=int, dest='epochs', default=100)
     argparser.add_argument('--optimizer', type=str, dest='optimizer', choices=OPTIMIZERS.keys(), default='adam')
     argparser.add_argument('--lr', type=float, dest='lr', default=0.005)
@@ -84,4 +85,4 @@ if __name__ == '__main__':
         print(f'Epoch {epoch+1}/{args.epochs}, Loss {train_loss}')
         
         print('-> Saving state')
-        torch.save(model.state_dict(), 'model.state')
+        torch.save(model.state_dict(), args.output_path)
