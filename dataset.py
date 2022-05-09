@@ -18,11 +18,19 @@ class ICUSepsisDataset(torch.utils.data.Dataset):
     
     def __getitem__(self, i):
         data = pd.read_csv(self.files[i], sep='|')
+
+       # Remove the data after the first sepsis trigger
+        if (data[ICUSepsisDataset.target] == 1).any():
+            first_sepsis_idx = data[ICUSepsisDataset.target].idxmax()
+            data = data[:first_sepsis_idx+1]
+
+        y = data[ICUSepsisDataset.target].to_numpy()
+
         if data[ICUSepsisDataset.features].isna().all(axis=0).any():
             # some physiological feature is missing
             # currently, just return None,None
             # TODO: implement better imputation mechanism
-            return None, None
+            return None, torch.from_numpy(y)
 
         for f in ICUSepsisDataset.physiological:
             _x = data[f][~data[f].isna()]
@@ -30,15 +38,9 @@ class ICUSepsisDataset(torch.utils.data.Dataset):
                 interp = interp1d(_x.index, _x.values, fill_value='extrapolate', kind='nearest')
                 data[f] = interp(data[f].index)
             except:
-                return None, None
-
-        # Remove the data after the first sepsis trigger
-        if (data[ICUSepsisDataset.target] == 1).any():
-            first_sepsis_idx = data[ICUSepsisDataset.target].idxmax()
-            data = data[:first_sepsis_idx+1]
+                return None, torch.from_numpy(y)
 
         X = data[ICUSepsisDataset.features].to_numpy()
-        y = data[ICUSepsisDataset.target].to_numpy()
         
         assert len(X) == len(y)
         

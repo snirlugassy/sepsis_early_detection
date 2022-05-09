@@ -12,7 +12,7 @@ import tqdm
 from scipy.interpolate import interp1d
 
 from dataset import ICUSepsisDataset
-from model import SepsisPredictionModel
+from model import SepsisPredictionModel_B1
 
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -41,8 +41,9 @@ if __name__ == '__main__':
     print('device:', device)
     print('====================')
 
-    model = SepsisPredictionModel(input_size=len(ICUSepsisDataset.features))
+    model = SepsisPredictionModel_B1(input_size=len(ICUSepsisDataset.features), hidden_dim=200)
     model.to(device)
+    print(model)
 
     icu_train = ICUSepsisDataset(os.path.join(args.data_path, 'train'))
     train_loader = DataLoader(icu_train, batch_size=1, shuffle=True)
@@ -56,19 +57,19 @@ if __name__ == '__main__':
         i = 0
         for x,y in icu_train:
             # ignore invalid samples
-            if x is None or y is None:
+            if x is None:
                 continue
 
             i += 1
             optimizer.zero_grad()
 
-            x = x.to(device).unsqueeze(0)
-            y = y.to(device)  # squeeze since batch_size=1
+            x = x.to(device)
+            y = y.to(device)
             N = len(y)
 
             # Forward pass
-            output = model(x).view(N,2) # squeeze since batch_size=1
-            L = loss(output, y)
+            output = model(x)
+            L = loss(output, y[-1])
             train_loss += L.item() * x.size(0)
 
             # Backpropagation
