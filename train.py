@@ -12,7 +12,7 @@ import tqdm
 from scipy.interpolate import interp1d
 
 from dataset import ICUSepsisDataset
-from model import SepsisPredictionModel_B1
+from model import SepsisPredictionModel_C1
 
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -42,11 +42,11 @@ if __name__ == '__main__':
     print('device:', device)
     print('====================')
 
-    model = SepsisPredictionModel_B1(input_size=len(ICUSepsisDataset.features), hidden_dim=200)
+    model = SepsisPredictionModel_C1(input_size=len(ICUSepsisDataset.features), hidden_dim=200)
     model.to(device)
     print(model)
 
-    icu_train = ICUSepsisDataset(os.path.join(args.data_path, 'train'))
+    icu_train = ICUSepsisDataset(os.path.join(args.data_path, 'train'), drop_non_sepsis_prob=0.6)
     # train_loader = DataLoader(icu_train, batch_size=1, shuffle=True)
     train_size = len(icu_train)
 
@@ -70,7 +70,8 @@ if __name__ == '__main__':
                 N = len(y)
 
                 # Forward pass
-                output = model(x)
+                output = model(x).view(1,-1)
+
                 L = loss(output, y[-1:])
                 train_loss += L.item() * x.size(0)
 
