@@ -71,7 +71,7 @@ if __name__ == '__main__':
 
                 # Forward pass
                 output = model(x)
-                L = loss(output, y[-1])
+                L = loss(output, y[-1:])
                 train_loss += L.item() * x.size(0)
 
                 # Backpropagation

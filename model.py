@@ -60,7 +60,7 @@ class SepsisPredictionModel_B1(torch.nn.Module):
         x, _ = self.lstm(x)
 
         # considers only the last state for predicting sepsis
-        x = x.squeeze()[-1]
+        x = x.squeeze()[-1].unsqueeze(0)
         
         x = self.mlp(x)
         
