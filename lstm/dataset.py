@@ -9,11 +9,11 @@ class ICUSepsisDataset(torch.utils.data.Dataset):
     features = ['HR', 'O2Sat', 'Temp', 'MAP','Resp', 'Age', 'Gender', 'ICULOS']
     target = 'SepsisLabel'
     physiological = ['HR', 'O2Sat', 'Temp', 'MAP','Resp']
-    def __init__(self, path, drop_non_sepsis_prob=0):
+    def __init__(self, path):
         self.files = [os.path.join(path, f) for f in os.listdir(path)]
         # since the data is highly imbalanced and favors non-sepsis patients,
         # during training we will mihgt add drop probabilty in case of non-sepsis patient
-        self.drop_non_sepsis_prob = drop_non_sepsis_prob
+        # self.drop_non_sepsis_prob = drop_non_sepsis_prob
         print(f'Found {len(self.files)} files in {path}')
     
     def __len__(self):
@@ -29,13 +29,13 @@ class ICUSepsisDataset(torch.utils.data.Dataset):
 
         y = data[ICUSepsisDataset.target].to_numpy()
 
-        has_sepsis = False
-        if (y==1).any():
-            has_sepsis = True
+        # has_sepsis = False
+        # if (y==1).any():
+        #     has_sepsis = True
 
-        if self.drop_non_sepsis_prob > 0 and not has_sepsis:
-            if np.random.rand() <= self.drop_non_sepsis_prob:
-                return None, torch.from_numpy(y)
+        # if self.drop_non_sepsis_prob > 0 and not has_sepsis:
+        #     if np.random.rand() <= self.drop_non_sepsis_prob:
+        #         return None, torch.from_numpy(y)
         
 
         if data[ICUSepsisDataset.features].isna().all(axis=0).any():
