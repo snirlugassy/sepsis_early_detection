@@ -70,13 +70,13 @@ class SepsisPredictionModel_B1(torch.nn.Module):
 class SepsisPredictionModel_C1(torch.nn.Module):
     def __init__(self, input_size, hidden_dim=128):
         super(SepsisPredictionModel_C1, self).__init__()
-        self.lstm = torch.nn.LSTM(input_size, hidden_size=hidden_dim, batch_first=True, num_layers=3, bidirectional=True)
+        self.lstm = torch.nn.LSTM(input_size, hidden_size=hidden_dim, batch_first=True, num_layers=2, bidirectional=True)
         self.mlp = torch.nn.Sequential(
             torch.nn.Linear(2*hidden_dim, 128), 
-            torch.nn.Tanh(), 
-            torch.nn.Dropout(p=0.5),
+            torch.nn.ReLU(), 
+            torch.nn.Dropout(p=0.33),
             torch.nn.Linear(128, 32), 
-            torch.nn.Tanh(),
+            torch.nn.ReLU(),
             torch.nn.Linear(32, 2)
         )
 

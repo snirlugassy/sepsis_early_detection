@@ -32,6 +32,7 @@ if __name__ == '__main__':
     argparser.add_argument('--optimizer', type=str, dest='optimizer', choices=OPTIMIZERS.keys(), default='adam')
     argparser.add_argument('--lr', type=float, dest='lr', default=0.005)
     argparser.add_argument('--print-steps', type=int, dest='print_steps', default=30)
+    argparser.add_argument('--gradient-steps', type=int, dest='gradient_steps', default=20)
 
     args = argparser.parse_args()
     
@@ -52,7 +53,8 @@ if __name__ == '__main__':
 
     loss = torch.nn.CrossEntropyLoss(weight=torch.Tensor([1, 5]))
     optimizer = OPTIMIZERS[args.optimizer](model.parameters(), lr=args.lr)
- 
+    
+    model.train()
     for epoch in range(args.epochs):
         train_loss = 0.0
         i = 0
@@ -63,7 +65,6 @@ if __name__ == '__main__':
                     continue
 
                 i += 1
-                optimizer.zero_grad()
 
                 x = x.to(device)
                 y = y.to(device)
@@ -75,9 +76,11 @@ if __name__ == '__main__':
                 L = loss(output, y[-1:])
                 train_loss += L.item() * x.size(0)
 
-                # Backpropagation
-                L.backward()
-                optimizer.step()
+                if i % args.gradient_steps == 0:
+                    # Backpropagation
+                    optimizer.zero_grad()
+                    L.backward()
+                    optimizer.step()
 
                 if i % args.print_steps == 0:
                     print(f'L: {train_loss / i: .5}')
