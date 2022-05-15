@@ -50,7 +50,7 @@ if __name__ == '__main__':
     # train_loader = DataLoader(icu_train, batch_size=1, shuffle=True)
     train_size = len(icu_train)
 
-    loss = torch.nn.CrossEntropyLoss()
+    loss = torch.nn.CrossEntropyLoss(weight=torch.Tensor([1, 5]))
     optimizer = OPTIMIZERS[args.optimizer](model.parameters(), lr=args.lr)
  
     for epoch in range(args.epochs):
